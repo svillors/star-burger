@@ -81,3 +81,5 @@ class OrderAPIView(APIView):
                 order=order,
                 quantity=quantity
             )
+
+        return Response(serializer.data, status=201)
