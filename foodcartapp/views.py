@@ -1,7 +1,6 @@
-import json
 from django.http import JsonResponse
 from django.templatetags.static import static
-
+from rest_framework.views import APIView
 
 from .models import Product, Order, OrderItem
 
@@ -58,21 +57,23 @@ def product_list_api(request):
     })
 
 
-def register_order(request):
-    request_body = request.body.decode()
-    order_content = json.loads(request_body)
-    order = Order.objects.create(
-        name=order_content['firstname'],
-        surname=order_content['lastname'],
-        phone_number=order_content['phonenumber'],
-        adress=order_content['address']
-    )
-    for item in order_content['products']:
-        product = Product.objects.get(id=item['product'])
-        quantity = item['quantity']
-        OrderItem.objects.create(
-            product=product,
-            order=order,
-            quantity=quantity
+class OrderAPIView(APIView):
+
+    def post(self, request):
+        order_content = request.data
+        order = Order.objects.create(
+            name=order_content['firstname'],
+            surname=order_content['lastname'],
+            phone_number=order_content['phonenumber'],
+            adress=order_content['address']
         )
-    return JsonResponse({})
+        for item in order_content['products']:
+            product = Product.objects.get(id=item['product'])
+            quantity = item['quantity']
+            OrderItem.objects.create(
+                product=product,
+                order=order,
+                quantity=quantity
+            )
+        print(request.data)
+        return JsonResponse({})
