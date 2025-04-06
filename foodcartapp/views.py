@@ -1,8 +1,10 @@
 from django.http import JsonResponse
 from django.templatetags.static import static
 from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from .models import Product, Order, OrderItem
+from .serializers import OrderSerializer
 
 
 def banners_list_api(request):
@@ -60,12 +62,16 @@ def product_list_api(request):
 class OrderAPIView(APIView):
 
     def post(self, request):
+        serializer = OrderSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
+
         order_content = request.data
         order = Order.objects.create(
-            name=order_content['firstname'],
-            surname=order_content['lastname'],
-            phone_number=order_content['phonenumber'],
-            adress=order_content['address']
+            firstname=order_content['firstname'],
+            lastname=order_content['lastname'],
+            phonenumber=order_content['phonenumber'],
+            address=order_content['address']
         )
         for item in order_content['products']:
             product = Product.objects.get(id=item['product'])
@@ -75,5 +81,3 @@ class OrderAPIView(APIView):
                 order=order,
                 quantity=quantity
             )
-        print(request.data)
-        return JsonResponse({})
