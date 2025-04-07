@@ -92,20 +92,7 @@ def view_restaurants(request):
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
-    orders = (
-        Order.objects
-        .prefetch_related(
-            Prefetch(
-                'items',
-                queryset=OrderItem.objects.select_related('product')
-            )
-        )
-        .annotate(
-            total_cost=Sum(
-                F('items__quantity') * F('items__product__price')
-            )
-        )
-    )
+    orders = Order.objects.calculate_total_price()
     return render(request, template_name='order_items.html', context={
         'order_items': orders
     })
