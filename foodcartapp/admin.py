@@ -111,7 +111,7 @@ class ProductAdmin(admin.ModelAdmin):
 class OrderItemsInline(admin.TabularInline):
     model = OrderItem
     readonly_fields = ['product', 'get_image', 'quantity']
-    fields = ['product', 'get_image', 'quantity']
+    fields = ['product', 'get_image', 'price', 'quantity']
     extra = 0
 
     def get_image(self, obj):

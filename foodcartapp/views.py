@@ -79,7 +79,8 @@ class OrderAPIView(APIView):
             OrderItem.objects.create(
                 product=product,
                 order=order,
-                quantity=quantity
+                quantity=quantity,
+                price=product.price
             )
 
         return Response(serializer.data, status=201)
