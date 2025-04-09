@@ -167,6 +167,7 @@ class Order(models.Model):
         blank=True
     )
     status = models.CharField(
+        'статус',
         max_length=4,
         choices=[
             ('PROC', 'Обработанный'),
@@ -177,6 +178,20 @@ class Order(models.Model):
     comment = models.CharField(
         max_length=200,
         blank=True
+    )
+    created_at = models.DateTimeField(
+        'Заказ создан',
+        auto_now_add=True
+    )
+    called_at = models.DateTimeField(
+        'Вреия звонка',
+        blank=True,
+        null=True
+    )
+    delivered_at = models.DateTimeField(
+        'Доставлено',
+        blank=True,
+        null=True
     )
 
     objects = OrderQuerySet.as_manager()
