@@ -174,6 +174,10 @@ class Order(models.Model):
         ],
         default='UNPR'
     )
+    comment = models.CharField(
+        max_length=200,
+        blank=True
+    )
 
     objects = OrderQuerySet.as_manager()
 
