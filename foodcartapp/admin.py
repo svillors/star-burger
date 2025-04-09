@@ -134,6 +134,7 @@ class OrderAdmin(admin.ModelAdmin):
         'phonenumber',
         'address',
         'comment',
+        'payment_method',
         'created_at',
         'called_at',
         'delivered_at'

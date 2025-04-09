@@ -175,6 +175,15 @@ class Order(models.Model):
         ],
         default='UNPR'
     )
+    payment_method = models.CharField(
+        'Способ оплаты',
+        max_length=4,
+        choices=[
+            ('CARD', 'Электронно'),
+            ('CASH', 'Наличностью')
+        ],
+        default='CASH'
+    )
     comment = models.CharField(
         max_length=200,
         blank=True
