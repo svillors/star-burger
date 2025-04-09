@@ -166,6 +166,14 @@ class Order(models.Model):
         verbose_name='Содержание заказа',
         blank=True
     )
+    status = models.CharField(
+        max_length=4,
+        choices=[
+            ('PROC', 'Обработанный'),
+            ('UNPR', 'Необработанный')
+        ],
+        default='UNPR'
+    )
 
     objects = OrderQuerySet.as_manager()
 
