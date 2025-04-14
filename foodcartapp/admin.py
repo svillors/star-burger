@@ -4,6 +4,7 @@ from django.templatetags.static import static
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.db.models import Prefetch
 
 from .models import Product
 from .models import ProductCategory
@@ -134,6 +135,7 @@ class OrderAdmin(admin.ModelAdmin):
         'phonenumber',
         'address',
         'comment',
+        'cooking_now',
         'payment_method',
         'created_at',
         'called_at',
@@ -151,3 +153,40 @@ class OrderAdmin(admin.ModelAdmin):
             return redirect(next_url)
         else:
             return res
+
+    def save_model(self, request, obj, form, change):
+        if obj.cooking_now:
+            obj.status = 'COOK'
+        elif not obj.cooking_now and obj.status != 'PROC':
+            obj.status = 'UNPR'
+        return super().save_model(request, obj, form, change)
+
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj, change, **kwargs)
+        if obj:
+            products = obj.products.prefetch_related(
+                Prefetch(
+                    'menu_items',
+                    queryset=(
+                        RestaurantMenuItem.objects
+                        .filter(availability=True)
+                        .select_related('restaurant')
+                    ),
+                    to_attr='available_menu_items'
+                )
+            )
+            restaurants = None
+            for product in products:
+                available_menu_items = getattr(product, 'available_menu_items', [])
+                if restaurants is None:
+                    restaurants = {
+                        item.restaurant.id for item in available_menu_items}
+                else:
+                    restaurants.intersection_update(
+                        item.restaurant.id for item in available_menu_items)
+            form.base_fields['cooking_now'].queryset = (
+                Restaurant
+                .objects
+                .filter(id__in=list(restaurants))
+            )
+        return form

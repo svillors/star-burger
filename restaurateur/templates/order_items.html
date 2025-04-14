@@ -21,11 +21,12 @@
       <th>Телефон</th>
       <th>Адрес доставки</th>
       <th>Комментарий</th>
+      <th>Рестораны</th>
       <th>Действия</th>
     </tr>
 
     {% for item in order_items %}
-      {% if item.status == "UNPR" %}
+      {% if item.status == "UNPR" or item.status == "COOK" %}
         <tr>
           <td>{{item.id}}</td>
           <td>{{item.get_status_display}}</td>
@@ -35,6 +36,24 @@
           <td>{{item.phonenumber}}</td>
           <td>{{item.address}}</td>
           <td>{{item.comment}}</td>
+          <td>
+            {% if item.cooking_now %}
+              готовит {{item.cooking_now.name}}
+            {% else %}
+              {% if item.restaurants %}
+                <details style="white-space: nowrap;">
+                <summary  style="cursor: pointer; font-size: 14px;">Может быть приготовлен ресторанами:</summary>
+                <ul>
+                  {% for i in item.restaurants %}
+                    <li>{{i}}</li>
+                  {% endfor %}
+                </ul>
+                </details>
+              {% else %}
+                Подходяших ресторанов не найдено
+              {% endif %}
+            {% endif %}
+          </td>
           <td>
             <a href="{% url 'admin:foodcartapp_order_change' item.id %}?next={{ request.path|urlencode }}">Ред.</a>
           </td>

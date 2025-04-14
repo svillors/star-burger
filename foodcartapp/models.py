@@ -171,7 +171,8 @@ class Order(models.Model):
         max_length=4,
         choices=[
             ('PROC', 'Обработанный'),
-            ('UNPR', 'Необработанный')
+            ('UNPR', 'Необработанный'),
+            ('COOK', 'Готовится')
         ],
         default='UNPR'
     )
@@ -187,6 +188,13 @@ class Order(models.Model):
     comment = models.CharField(
         max_length=200,
         blank=True
+    )
+    cooking_now = models.ForeignKey(
+        Restaurant,
+        verbose_name='Готовит сейчас',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
     )
     created_at = models.DateTimeField(
         'Заказ создан',
