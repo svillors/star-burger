@@ -44,8 +44,8 @@
                 <details style="white-space: nowrap;">
                 <summary  style="cursor: pointer; font-size: 14px;">Может быть приготовлен ресторанами:</summary>
                 <ul>
-                  {% for i in item.restaurants %}
-                    <li>{{i}}</li>
+                  {% for restaurant in item.restaurants %}
+                    <li>{{restaurant.0}} - {{restaurant.1}}</li>
                   {% endfor %}
                 </ul>
                 </details>
