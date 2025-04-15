@@ -108,24 +108,17 @@ def fetch_restaurant_coordinates(apikey, places, restaurant, order_coordinates):
                 longitude=longitude,
                 latitude=latitude
             )
-            distance = dist.distance(
-                (latitude, longitude),
-                order_coordinates
-            ).meters
             places[restaurant.address] = place
-            if not distance:
-                return (restaurant.name, 'Ошибка получения координат')
-            return (restaurant.name, distance)
         else:
             place = places[restaurant.address]
-            distance = dist.distance(
-                (place.latitude, place.longitude),
-                order_coordinates
-            ).meters
-            if not distance:
-                return (restaurant.name, 'Ошибка получения координат')
-            return (restaurant.name, distance)
-    except requests.exceptions.RequestException:
+        if order_coordinates == (0.0, 0.0):
+            return (restaurant.name, 'Ошибка получения координат')
+        distance = dist.distance(
+            (place.latitude, place.longitude),
+            order_coordinates
+        ).meters
+        return (restaurant.name, distance)
+    except Exception:
         return (restaurant.name, 'Ошибка получения координат')
 
 
@@ -177,17 +170,8 @@ def view_orders(request):
     )
     for order in orders:
         restaurants = None
-        if order.address not in places:
-            order_coordinates = fetch_coordinates(api_key, order.address)
-            place = Place.objects.create(
-                address=order.address,
-                longitude=order_coordinates[0],
-                latitude=order_coordinates[1]
-            )
-            places[place.address] = place
-        else:
-            place = places[order.address]
-            order_coordinates = (place.latitude, place.longitude)
+        place = places[order.address]
+        order_coordinates = (place.latitude, place.longitude)
         for product in order.products.all():
             available_menu_items = getattr(product, 'available_menu_items', [])
             if restaurants is None:
