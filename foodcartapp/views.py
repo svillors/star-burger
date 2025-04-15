@@ -67,25 +67,6 @@ class OrderAPIView(APIView):
         serializer = OrderSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=400)
-        try:
-            with transaction.atomic():
-                order_content = request.data
-                order = Order.objects.create(
-                    firstname=order_content['firstname'],
-                    lastname=order_content['lastname'],
-                    phonenumber=order_content['phonenumber'],
-                    address=order_content['address']
-                )
-                for item in order_content['products']:
-                    product = Product.objects.get(id=item['product'])
-                    quantity = item['quantity']
-                    OrderItem.objects.create(
-                        product=product,
-                        order=order,
-                        quantity=quantity,
-                        price=product.price
-                    )
-        except Exception as e:
-            print(f'error while creating order: {e}')
+        serializer.save()
 
         return Response(serializer.data, status=201)
