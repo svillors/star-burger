@@ -23,6 +23,7 @@ class OrderSerializer(serializers.ModelSerializer):
         many=True,
         write_only=True,
         source=None,
+        required=True
     )
 
     class Meta:
@@ -34,12 +35,6 @@ class OrderSerializer(serializers.ModelSerializer):
             'address',
             'products'
         )
-
-    def validate_products(self, value):
-        if not value:
-            raise serializers.ValidationError(
-                "Этот список не может быть пустым.")
-        return value
 
     def create(self, validated_data):
         try:

@@ -154,7 +154,6 @@ def view_orders(request):
     env = Env()
     env.read_env()
     api_key = env.str('YANDEX_API_KEY')
-    places = {place.address: place for place in Place.objects.all()}
     orders = (
         Order.objects
         .calculate_total_price()
@@ -168,6 +167,11 @@ def view_orders(request):
             to_attr='available_menu_items'
         ))
     )
+    order_addresses = {order.address for order in orders}
+    places = {
+        place.address: place
+        for place in Place.objects.filter(address__in=order_addresses)
+    }
     for order in orders:
         restaurants = None
         place = places[order.address]

@@ -65,8 +65,7 @@ class OrderAPIView(APIView):
 
     def post(self, request):
         serializer = OrderSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=400)
+        serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(serializer.data, status=201)
