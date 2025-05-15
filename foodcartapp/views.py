@@ -1,11 +1,10 @@
 from django.http import JsonResponse
 from django.templatetags.static import static
-from django.db import transaction
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-from .models import Product, Order, OrderItem
+from .models import Product
 from .serializers import OrderSerializer
 
 
