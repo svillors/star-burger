@@ -85,9 +85,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default='sqlite:////{0}'.format(os.path.join(BASE_DIR, 'db.sqlite3'))
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env.str('DB_NAME'),
+        'USER': env.str('DB_USER_NAME'),
+        'PASSWORD': env.str('DB.USER.PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': env.str('DB_PORT'),
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
