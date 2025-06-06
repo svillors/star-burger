@@ -12,4 +12,8 @@ python3 manage.py migrate
 python3 manage.py collectstatic --noinput
 sudo systemctl reload nginx.service
 sudo systemctl restart star-burger.service
+source .env
+REVISION=$(git rev-parse HEAD)
+USERNAME=$(whoami)
+curl -H "X-Rollbar-Access-Token: $ROLLBAR_TOKEN" -H "Content-Type: application/json" -X POST 'https://api.rollbar.com/api/1/deploy' -d "{\"environment\": \"production\", \"revision\": \"$REVISION\", \"local_username\": \"$USERNAME\"}"
 echo "Деплой успешно завершён"
