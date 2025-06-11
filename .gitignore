@@ -1,7 +1,8 @@
 bundles/**
 node_modules/
 media/
-
+**/venv*/
+staticfiles/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
