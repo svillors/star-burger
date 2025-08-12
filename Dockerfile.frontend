@@ -9,5 +9,5 @@ RUN npm ci
 COPY bundles-src ./bundles-src/
 COPY assets/ ./assets/
 
-CMD ["npx","parcel","build","bundles-src/index.js","--dist-dir","/app/bundles","--public-url","/bundles"]
+CMD ["npx","parcel","build","bundles-src/index.js","--dist-dir","/app/staticfiles","--public-url","/staticfiles"]
 
