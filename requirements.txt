@@ -5,3 +5,4 @@ environs[django]==9.3.2
 geopy==2.4.1
 phonenumbers==9.0.2
 requests==2.32.3
+gunicorn==23.0.0
