@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    volumes:
+      - /var/www/frontend/bundles/:/app/bundles
+  
+  backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile.backend
+    volumes:
+      - /var/www/frontend/static/:/app/staticfiles
+      - /var/www/frontend/media/:/app/media
+    restart: always
+    depends_on:
+      - database
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - ROLLBAR_TOKEN=${ROLLBAR_TOKEN}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - DB_NAME=mydb
+      - DB_USER_NAME=postgres
+      - DB_USER_PASSWORD=postgres
+      - DB_HOST=database
+      - DB_PORT=5432
+    command: >
+      sh -c "python3 manage.py migrate --noinput &&
+            python3 manage.py collectstatic --noinput &&
+            gunicorn -b 0.0.0.0:8000 star_burger.wsgi:application"
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  database:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:
