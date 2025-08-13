@@ -5,11 +5,10 @@ git pull
 if [ ! -d "venvasd" ]; then
     python3 -m venv venvasd
 fi
-venvasd/bin/pip install -r requirements.txt
-npm ci --dev
-venvasd/bin/python3 manage.py migrate
-./node_modules/.bin/parcel build bundles-src/index.js --dist-dir bundles --public-url="./"
-venvasd/bin/python3 manage.py collectstatic --noinput
+docker compose build
+docker compose run --rm frontend
+docker compose up -d database
+docker compose up -d backend
 sudo systemctl reload nginx.service
 sudo systemctl restart star-burger.service
 source .env
