@@ -136,6 +136,7 @@ Parcel будет следить за файлами в каталоге `bundle
 
 ## Как запустить prod-версию сайта
 
+### Запуск без использования контейнеров
 Собрать фронтенд:
 
 ```sh
@@ -149,13 +150,47 @@ Parcel будет следить за файлами в каталоге `bundle
 - `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
 - `ROLLBAR_TOKEN` - токен сервиса rollbar. Нужен для логирования ошибок [Сайт rollbar](https://rollbar.com/)
 
-Для автоматичесокго деплоя:
+Затем настроить nginx и демонизировать django
+
+### Запуск с использованием контейнеров
+
+Аналогично настройка `.env`:
+
+- `SECRET_KEY` — секретный ключ проекта. Он отвечает за шифрование на сайте. Например, им зашифрованы все пароли на вашем сайте.
+- `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
+- `ROLLBAR_TOKEN` - токен сервиса rollbar. Нужен для логирования ошибок [Сайт rollbar](https://rollbar.com/)
+
+скачивание docker [оф. сайт docker](https://www.docker.com/)
+
+#### Настройка nginx
+Шаблог для конфига nginx
+```conf
+server {
+    listen 80;
+    server_name your_domen.com www.your_domen.com;
+
+    location /static/ { alias /var/www/frontend/staticfiles/;}
+    location /media/  { alias /var/www/frontend/media/;}
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    client_max_body_size 20m;
+}
+```
+#### Деплой
+Запускаем скрипт автоматического деплоя:
 ```bash
 ./deploy.sh
 ```
+
 ## Демо сайта
 
-Зайти и оценить функционал вы можете по ссылке svillors.com
+Зайти и оценить функционал вы можете по ссылке [svillors.com](http://svillors.com)
 
 ## Цели проекта
 
